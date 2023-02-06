@@ -12,7 +12,7 @@ in Vertex {
 	vec3 worldPos;
 } IN;
 
-out vec4 fragColour [2]; //Our final outputted colours!
+out vec4 fragColour [3]; //Our final outputted colours!
 
 void main(void) {
 	mat3 TBN = mat3(normalize(IN.tangent),
@@ -22,6 +22,7 @@ void main(void) {
 	vec3 normal = texture2D(bumpTex, IN.texCoord).rgb * 2.0 - 1.0;
 	normal = normalize(TBN * normalize(normal ));
 
-	fragColour [0] = texture2D(diffuseTex , IN.texCoord );
-	fragColour [1] = vec4(normal.xyz * 0.5 + 0.5 ,1.0);
+	fragColour[0] = texture2D(diffuseTex , IN.texCoord );
+	fragColour[1] = vec4(normal.xyz * 0.5 + 0.5 ,1.0);
+	fragColour[2] = vec4(IN.worldPos, 1.0);	
 }

@@ -5,6 +5,7 @@ uniform sampler2D texNoise;
 //uniform sampler2D gNormal;
 uniform sampler2D depthTex;
 uniform sampler2D normTex;
+uniform sampler2D worldPosTex;
 
 uniform vec3 samples[64];
 uniform vec2 screenSize;
@@ -26,7 +27,7 @@ uniform mat4 inverseProjView;
 out vec4 fragColour;
 
 int kernelSize = 64;
-float radius = 0.5;
+float radius = 5.0;
 float bias = 0.025;
 
 void main()
@@ -39,7 +40,10 @@ void main()
 	float depth = texture(depthTex, texCoord.xy).r;
 	vec3 ndcPos = vec3(texCoord, depth) * 2.0 - 1.0;
 	vec4 invClipPos = inverseProjView * vec4(ndcPos, 1.0);
-	vec3 worldPos = invClipPos.xyz / invClipPos.w;
+	//vec3 worldPos = invClipPos.xyz / invClipPos.w;
+	vec3 worldPos = texture(worldPosTex, texCoord.xy).rgb;
+
+
 	vec3 normal = normalize(texture(normTex, texCoord.xy).xyz * 2.0 -1.0);
 
 
@@ -55,28 +59,28 @@ void main()
 	for(int i = 0; i < kernelSize; ++i)
 	{
 		// get sample position
-		vec3 samplePos = TBN * samples[i]; // from tangent to view-space
-		samplePos = worldPos + samplePos * radius; 
+		vec3 samplePos = TBN * (samples[i] * radius); // from tangent to view-space
+		samplePos = worldPos + samplePos; 
 		
 		vec4 offset = vec4(samplePos, 1.0);
 		offset      = projMatrix * offset;    // from view to clip-space
 		offset.xyz /= offset.w;               // perspective divide
 		offset.xyz  = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0 
 
-		//float sampleDepth = texture(gPosition, offset.xy).z; 
-		float sampleDepth = depth;
+		float sampleDepth = texture(worldPosTex, offset.xy).z; 
+		//float sampleDepth = depth;
 		//float sampleDepth = IN.worldPos.z; 
 
-		occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0);  
+		//occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0);  
 
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(worldPos.z - sampleDepth));
 		occlusion       += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck; 
 	}  
 	occlusion = 1.0 - (occlusion / kernelSize);
 
-	//fragColour = vec4(occlusion, occlusion, occlusion, 1.0);
+	fragColour = vec4(occlusion, occlusion, occlusion, 1.0);
 	
-	fragColour = vec4(worldPos, 1.0);
+	//fragColour = vec4(worldPos, 1.0);
 	//fragColour = vec4(invClipPos);
 	//fragColour = vec4(ndcPos.x, ndcPos.y, ndcPos.z, 1.0);
 	//fragColour = vec4(depth, depth, depth, 1.0);

@@ -45,7 +45,7 @@ protected:
 	void SetUpBuffers();
 	void FillBuffers();
 
-	void GenerateScreenTexture(GLuint& into, bool depth = false);
+	void GenerateScreenTexture(GLuint& into, bool depth = false, bool largeFormat = false);
 
 	void PopulateSceneGraph();
 	void BuildNodeLists(SceneNode* from);
@@ -111,6 +111,7 @@ protected:
 	GLuint bufferColourTex;
 	GLuint gBufferNormalTex;
 	GLuint gBufferDepthTex;
+	GLuint gBufferWorldPosTex;
 
 	GLuint noiseTex;
 	GLuint ssaoFBO;

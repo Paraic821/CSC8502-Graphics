@@ -80,7 +80,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	//shadowSceneShader = new Shader("shadowscenevert.glsl", "shadowscenefrag.glsl");
 	//shadowShader = new Shader("shadowVert.glsl", "shadowFrag.glsl");
 	//gBufferShader = new Shader("gBufferVertex.glsl", "gBufferFragment.glsl");
-	gBufferShader = new Shader("bumpVertex.glsl", "bufferFragment.glsl");
+	//gBufferShader = new Shader("bumpVertex.glsl", "bufferFragment.glsl");
+	gBufferShader = new Shader("gBufferVertex.glsl", "bufferFragment.glsl");
 
 	if (!reflectShader->LoadSuccess() || !skyboxShader->LoadSuccess() || !lightShader->LoadSuccess() || !characterShader->LoadSuccess()) {
 		return;
@@ -163,7 +164,7 @@ void Renderer::UpdateScene(float dt, double totalTime) {
 	}
 }
 
-void Renderer::GenerateScreenTexture(GLuint& into, bool depth) {
+void Renderer::GenerateScreenTexture(GLuint& into, bool depth, bool largeFormat) {
 	glGenTextures(1, &into);
 	glBindTexture(GL_TEXTURE_2D, into);
 
@@ -174,6 +175,7 @@ void Renderer::GenerateScreenTexture(GLuint& into, bool depth) {
 
 	GLuint format = depth ? GL_DEPTH_COMPONENT24 : GL_RGBA8;
 	GLuint type = depth ? GL_DEPTH_COMPONENT : GL_RGBA;
+	format = largeFormat ? GL_RGBA32F : format;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, type, GL_UNSIGNED_BYTE, NULL);
 
@@ -242,22 +244,25 @@ void Renderer::GBuffer() {
 void Renderer::SetUpBuffers() {
 	glGenFramebuffers(1, &gBufferFBO);
 
-	GLenum buffers[2] = {
+	GLenum buffers[3] = {
 		GL_COLOR_ATTACHMENT0,
-		GL_COLOR_ATTACHMENT1
+		GL_COLOR_ATTACHMENT1,
+		GL_COLOR_ATTACHMENT2
 	};
 
 	// Generate our scene depth texture ...
 	GenerateScreenTexture(gBufferDepthTex, true);
 	GenerateScreenTexture(bufferColourTex);
 	GenerateScreenTexture(gBufferNormalTex);
+	GenerateScreenTexture(gBufferWorldPosTex, false, true);
 
 	//And now attach them to our FBOs
 	glBindFramebuffer(GL_FRAMEBUFFER, gBufferFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gBufferNormalTex, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gBufferWorldPosTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gBufferDepthTex, 0);
-	glDrawBuffers(2, buffers);
+	glDrawBuffers(3, buffers);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		return;
@@ -363,7 +368,7 @@ void Renderer::PopulateSceneGraph() {
 	SceneNode* sn = new SceneNode();
 	sn->SetShader(lightShader);
 	//sn->SetTransform(Matrix4::Translation(Vector3(630.0f, -355.0f, 4168.0f)) * Matrix4::Rotation(-4.0f, Vector3(0,0,1)) );
-	sn->SetTransform(Matrix4::Translation(Vector3(630.0f, -355.0f, 2700.0f)) * Matrix4::Rotation(-4.0f, Vector3(0,0,1)) );
+	sn->SetTransform(Matrix4::Translation(Vector3(630.0f, -355.0f, 2770.0f)) * Matrix4::Rotation(-4.0f, Vector3(0,0,1)) );
 	sn->SetModelScale(Vector3(150.0f, 50.0f, 50.0f));
 	sn->SetMesh(Mesh::LoadFromMeshFile("Rock5A.msh"));
 	sn->SetMaterial(new MeshMaterial("Rock5A1.mat"));
@@ -648,6 +653,10 @@ void Renderer::DrawSSAO() {
 	glActiveTexture(GL_TEXTURE2);
 	glUniform1i(glGetUniformLocation(ssaoShader->GetProgram(), "normTex"), 2);
 	glBindTexture(GL_TEXTURE_2D, gBufferNormalTex);
+
+	glActiveTexture(GL_TEXTURE3);
+	glUniform1i(glGetUniformLocation(ssaoShader->GetProgram(), "worldPosTex"), 3);
+	glBindTexture(GL_TEXTURE_2D, gBufferWorldPosTex);
 
 	quad->Draw();
 
