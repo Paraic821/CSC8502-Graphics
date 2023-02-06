@@ -1,0 +1,18 @@
+﻿  CourseworkMain.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\SceneNode.h(47,22): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  Renderer.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\SceneNode.h(47,22): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(211,69): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(211,55): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(219,69): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(219,55): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(443,81): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(611,40): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(610,58): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(614,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(622,39): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(621,57): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(641,65): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(641,51): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(753,81): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+LINK : fatal error LNK1181: cannot open input file 'nclgl.lib'

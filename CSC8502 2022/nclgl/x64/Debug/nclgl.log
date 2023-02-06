@@ -1,0 +1,36 @@
+﻿  glad.c
+  Camera.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\Camera.cpp(29,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\Camera.cpp(31,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  ComputeShader.cpp
+  CubeRobot.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\scenenode.h(47,22): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  Frustrum.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\SceneNode.h(47,22): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  GameTimer.cpp
+  HeightMap.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\HeightMap.cpp(25,48): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\HeightMap.cpp(25,31): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\HeightMap.cpp(26,39): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\HeightMap.cpp(26,36): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  Keyboard.cpp
+  Light.cpp
+  Matrix2.cpp
+  Matrix3.cpp
+  Matrix4.cpp
+  Mesh.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\Mesh.cpp(436,19): warning C4244: '=': conversion from 'float' to 'GLuint', possible loss of data
+  MeshAnimation.cpp
+  MeshMaterial.cpp
+  Mouse.cpp
+  OGLRenderer.cpp
+  Plane.cpp
+  Quaternion.cpp
+  SceneNode.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\SceneNode.h(47,22): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  Shader.cpp
+  Generating Code...
+  Compiling...
+  Window.cpp
+  Generating Code...
+  nclgl.vcxproj -> C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\x64\Debug\nclgl.lib

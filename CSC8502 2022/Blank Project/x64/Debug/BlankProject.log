@@ -1,0 +1,14 @@
+﻿  Renderer.cpp
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\SceneNode.h(47,22): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(212,69): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(212,55): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(220,69): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(220,55): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(481,81): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(672,40): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(671,58): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(675,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(683,39): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(682,57): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\Blank Project\Renderer.cpp(786,81): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  BlankProject.vcxproj -> C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\x64\Debug\Blank Project.exe
