@@ -9,3 +9,5 @@
 /.vs
 /out/build/x64-Debug
 /x64
+/nclgl/x64
+/Blank Project/x64
