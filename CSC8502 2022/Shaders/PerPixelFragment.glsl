@@ -4,6 +4,8 @@ uniform sampler2D diffuseTex;
 uniform sampler2D bumpTex;
 uniform sampler2D ssao;
 
+uniform vec2 pixelSize; // reciprocal of resolution
+
 uniform float hasBumpMap;
 uniform vec3 cameraPos;
 uniform vec4 lightColour;
@@ -23,7 +25,8 @@ void main ( void ) {
 	vec3 incident = normalize( lightPos - IN.worldPos );
 	vec3 viewDir = normalize( cameraPos - IN.worldPos );
 	vec3 halfDir = normalize( incident + viewDir );
-	float ambientOcclusion = texture(ssao, IN.texCoord).r;
+	vec2 texCoord = vec2(gl_FragCoord.xy * pixelSize);
+	float ambientOcclusion = texture(ssao, texCoord).r;
 
 	vec4 diffuse = texture( diffuseTex , IN.texCoord );
 	vec3 normal = IN.normal;
@@ -41,7 +44,9 @@ void main ( void ) {
 	vec3 surface = diffuse.rgb * lightColour.rgb;
 	fragColour.rgb = surface * lambert * attenuation;
 	fragColour.rgb += ( lightColour.rgb * specFactor ) * attenuation * 0.33;
-	//fragColour.rgb += surface * 0.2f * ambientOcclusion; //ambient!
-	fragColour.rgb += surface * 0.3f;
+	fragColour.rgb += surface * 0.2f * ambientOcclusion; //ambient!
+	//fragColour.rgb += surface * 0.3f;
 	fragColour.a = diffuse.a;
+
+	fragColour = vec4(ambientOcclusion, ambientOcclusion, ambientOcclusion, 1.0);
 }

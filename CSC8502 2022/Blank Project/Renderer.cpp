@@ -269,7 +269,7 @@ void Renderer::SetUpBuffers() {
 	}
 
 	glGenFramebuffers(1, &ssaoFBO);
-	//GLenum buf = { GL_COLOR_ATTACHMENT0 };
+	GLenum buf = { GL_COLOR_ATTACHMENT0 };
 
 	glGenTextures(1, &noiseTex);
 	glActiveTexture(GL_TEXTURE0);
@@ -284,7 +284,7 @@ void Renderer::SetUpBuffers() {
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColourTex, 0);
-	//glDrawBuffer(buf);
+	glDrawBuffer(buf);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		return;
@@ -367,8 +367,7 @@ void Renderer::FillBuffers() {
 void Renderer::PopulateSceneGraph() {
 	SceneNode* sn = new SceneNode();
 	sn->SetShader(lightShader);
-	//sn->SetTransform(Matrix4::Translation(Vector3(630.0f, -355.0f, 4168.0f)) * Matrix4::Rotation(-4.0f, Vector3(0,0,1)) );
-	sn->SetTransform(Matrix4::Translation(Vector3(630.0f, -355.0f, 2770.0f)) * Matrix4::Rotation(-4.0f, Vector3(0,0,1)) );
+	sn->SetTransform(Matrix4::Translation(Vector3(630.0f, -355.0f, 4168.0f)) * Matrix4::Rotation(-4.0f, Vector3(0,0,1)) );
 	sn->SetModelScale(Vector3(150.0f, 50.0f, 50.0f));
 	sn->SetMesh(Mesh::LoadFromMeshFile("Rock5A.msh"));
 	sn->SetMaterial(new MeshMaterial("Rock5A1.mat"));
@@ -681,6 +680,9 @@ void Renderer::CalculateSampleKernels() {
 									randomFloats(generator) * 2.0 - 1.0,
 									randomFloats(generator));
 
+		sample.Normalise();
+		sample = sample * randomFloats(generator);
+
 		float scale = (float)i / 64.0;
 		scale = lerp(0.1f, 1.0f, scale * scale);
 		sample = sample * scale;		
@@ -750,8 +752,8 @@ void Renderer::DrawNode(SceneNode* n) {
 
 			GLuint a = n->GetDiffuseTextures()[i];
 			//glUniform1i(glGetUniformLocation(shader->GetProgram(), "useTexture"), texture);
-			glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "diffuseTex"), 0);
-			glActiveTexture(GL_TEXTURE0);
+			glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "diffuseTex"), 2);
+			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, n->GetDiffuseTextures()[i]);
 
 
@@ -766,9 +768,11 @@ void Renderer::DrawNode(SceneNode* n) {
 				glBindTexture(GL_TEXTURE_2D, n->GetNormalMaps()[i]);
 			}
 
-			glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "ssaoTex"), 2);
-			glActiveTexture(GL_TEXTURE2);
+			glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "ssaoTex"), 0);
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, ssaoColourTex);
+
+			glUniform2f(glGetUniformLocation(n->GetShader()->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
 
 			/*modelMatrix.ToIdentity();
 			textureMatrix.ToIdentity();*/
