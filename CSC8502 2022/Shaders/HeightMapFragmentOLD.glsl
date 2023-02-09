@@ -1,10 +1,17 @@
 #version 330 core
 
-uniform sampler2D diffuseTex;
 //uniform sampler2D bumpTex;
-uniform sampler2D rockDiffuseTex;
 //uniform sampler2D rockBumpTex;
-uniform sampler2D grassTex;
+//uniform sampler2D diffuseTex;
+//uniform sampler2D rockDiffuseTex;
+//uniform sampler2D grassTex;
+
+uniform sampler2D ssao;
+uniform vec2 pixelSize; // reciprocal of resolution
+
+uniform sampler2D diffuseTex0;
+uniform sampler2D diffuseTex1;
+uniform sampler2D diffuseTex2;
 
 //uniform float heights[3];
 
@@ -33,26 +40,29 @@ void main ( void ) {
 	vec3 normal = IN.normal;
 	
 	if(IN.worldPos.y > heights[3]){
-		diffuse = texture( rockDiffuseTex, IN.texCoord );
+		diffuse = texture( diffuseTex2, IN.texCoord );
 	}
 	else if(IN.worldPos.y <= heights[3] && IN.worldPos.y  > heights[2]){
-		vec4 tex1 = texture( rockDiffuseTex, IN.texCoord );
-		vec4 tex2 = texture( grassTex, IN.texCoord );		
+		vec4 tex1 = texture( diffuseTex2, IN.texCoord );
+		vec4 tex2 = texture( diffuseTex1, IN.texCoord );		
 		float blendFactor = (IN.worldPos.y - heights[2]) / (heights[3] - heights[2]);	
 		diffuse = mix(tex2, tex1, blendFactor);
 	}
 	else if(IN.worldPos.y <= heights[2] && IN.worldPos.y  > heights[1]){
-		diffuse = texture( grassTex, IN.texCoord );
+		diffuse = texture( diffuseTex1, IN.texCoord );
 	}
 	else if(IN.worldPos.y <= heights[1] && IN.worldPos.y  > heights[0]){
-		vec4 tex1 = texture( grassTex, IN.texCoord );
-		vec4 tex2 = texture( diffuseTex, IN.texCoord );		
+		vec4 tex1 = texture( diffuseTex1, IN.texCoord );
+		vec4 tex2 = texture( diffuseTex0, IN.texCoord );		
 		float blendFactor = (IN.worldPos.y - heights[0]) / (heights[1] - heights[0]);	
 		diffuse = mix(tex2, tex1, blendFactor);
 	}
 	else if(IN.worldPos.y <= heights[0]){
-		diffuse = texture( diffuseTex, IN.texCoord );
+		diffuse = texture( diffuseTex0, IN.texCoord );
 	}
+
+	vec2 texCoord = vec2(gl_FragCoord.xy * pixelSize);
+	float ambientOcclusion = texture(ssao, texCoord).r;
 	
 	float lambert = max( dot( incident, normal ), 0.0f );
 	float distance = length( lightPos - IN.worldPos );
@@ -64,6 +74,8 @@ void main ( void ) {
 	vec3 surface = diffuse.rgb * lightColour.rgb;
 	fragColour.rgb = surface * lambert * attenuation;
 	fragColour.rgb += ( lightColour.rgb * specFactor ) * attenuation * 0.33;
-	fragColour.rgb += surface * 0.1f; //ambient!
+	fragColour.rgb += surface * 0.2f * ambientOcclusion; //ambient!
 	fragColour.a = diffuse.a;
+
+	fragColour = vec4(ambientOcclusion, ambientOcclusion, ambientOcclusion, 1.0);
 }

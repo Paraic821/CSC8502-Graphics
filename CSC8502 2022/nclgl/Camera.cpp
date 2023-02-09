@@ -8,12 +8,23 @@ void Camera::UpdateCamera(float dt) {
 }
 
 void Camera::UpdateCamera(float dt, double totalTime) {
+	if (cooldown) {
+		cooldownTimer += dt;
 
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
+		if (cooldownTimer >= 0.1) {
+			cooldown = false;
+			cooldownTimer = 0;
+		}
+	}
+
+	if (!cooldown && Window::GetKeyboard()->KeyDown(KEYBOARD_1)) {
 		hasControl = !hasControl;
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_2)) {
+		cooldown = true;
+	}
+	if (!cooldown && Window::GetKeyboard()->KeyDown(KEYBOARD_2)) {
 		started = true;
 		startTime = totalTime;
+		cooldown = true;
 	}
 
 	if (hasControl)

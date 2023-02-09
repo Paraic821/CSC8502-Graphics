@@ -43,7 +43,7 @@
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	quad = Mesh::GenerateQuad();
 	root = new SceneNode();
-	screenSize = parent.GetScreenSize();
+	screenSize = Vector2(width, height);
 
 
 	waterTex = SOIL_load_OGL_texture(TEXTUREDIR"water.TGA", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
@@ -162,6 +162,10 @@ void Renderer::UpdateScene(float dt, double totalTime) {
 		currentFrame = (currentFrame + 1) % anim->GetFrameCount();
 		frameTime += 1.0f / anim->GetFrameRate();
 	}
+	if (screenSize.x != width) {
+		screenSize = Vector2(width, height);
+		SetUpBuffers();
+	}
 }
 
 void Renderer::GenerateScreenTexture(GLuint& into, bool depth, bool largeFormat) {
@@ -200,46 +204,46 @@ void Renderer::RenderScene() {
 	DrawNodes();
 	ClearNodeLists();
 
-	DrawHeightmap();
+	//DrawHeightmap();
 	DrawWater();
 }
 
-void Renderer::GBuffer() {
-	glGenFramebuffers(1, &gBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	//BindShader(gBufferShader);
-
-	glGenTextures(1, &gPosition);
-	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenSize.x, screenSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glGenTextures(1, &gNormal);
-	glBindTexture(GL_TEXTURE_2D, gNormal);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenSize.x, screenSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedo, 0);
-
-
-	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, attachments);
-
-	//unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-	//glDrawBuffers(3, attachments);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		return;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+//void Renderer::GBuffer() {
+//	glGenFramebuffers(1, &gBuffer);
+//	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+//	//BindShader(gBufferShader);
+//
+//	glGenTextures(1, &gPosition);
+//	glBindTexture(GL_TEXTURE_2D, gPosition);
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenSize.x, screenSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//
+//	glGenTextures(1, &gNormal);
+//	glBindTexture(GL_TEXTURE_2D, gNormal);
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenSize.x, screenSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//
+//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+//	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedo, 0);
+//
+//
+//	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+//	glDrawBuffers(2, attachments);
+//
+//	//unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+//	//glDrawBuffers(3, attachments);
+//
+//	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+//		return;
+//	}
+//
+//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//}
 
 void Renderer::SetUpBuffers() {
 	glGenFramebuffers(1, &gBufferFBO);
@@ -316,8 +320,12 @@ void Renderer::FillBuffers() {
 		if (root->GetChildren()[i]->GetMesh()) {
 			modelMatrix = root->GetChildren()[i]->GetWorldTransform() * Matrix4::Scale(root->GetChildren()[i]->GetModelScale());
 			UpdateShaderMatrices();
-			for (int j = 0; j < root->GetChildren()[i]->GetMesh()->GetSubMeshCount(); j++) {
-				root->GetChildren()[i]->GetMesh()->DrawSubMesh(j);
+			if (root->GetChildren()[i]->GetMesh()->GetSubMeshCount() == 0)
+				root->GetChildren()[i]->GetMesh()->Draw();
+			else {
+				for (int j = 0; j < root->GetChildren()[i]->GetMesh()->GetSubMeshCount(); j++) {
+					root->GetChildren()[i]->GetMesh()->DrawSubMesh(j);
+				}
 			}
 		}
 	}
@@ -392,7 +400,7 @@ void Renderer::PopulateSceneGraph() {
 	sn2->SetBoundingRadius(100000000.0f);
 	root->AddChild(sn2);
 
-	/*SceneNode* sn3 = new SceneNode();
+	SceneNode* sn3 = new SceneNode();
 	sn3->SetShader(lightShader);
 	sn3->SetTransform(Matrix4::Translation(Vector3(1375.0f, 10.0f, 2990.0f)));
 	sn3->SetModelScale(Vector3(8.0f, 8.0f, 8.0f));
@@ -426,7 +434,15 @@ void Renderer::PopulateSceneGraph() {
 	sn6->SetMesh(Mesh::LoadFromMeshFile("Col_1_tree_6.msh"));
 	sn6->SetMaterial(new MeshMaterial("Col_1_tree_6.mat"));
 	sn6->SetBoundingRadius(100000000.0f);
-	root->AddChild(sn6);*/
+	root->AddChild(sn6);
+		
+	SceneNode* sn7 = new SceneNode();
+	sn7->SetShader(heightMapShader);
+	sn7->SetMesh(heightMap);
+	vector<GLuint> textures = { earthTex,  grassTex, mountainTex };
+	sn7->SetDiffuseTextures(textures);
+	sn7->SetBoundingRadius(100000000.0f);
+	root->AddChild(sn7);
 }
 
 //void Renderer::DrawShadowScene() {
@@ -577,14 +593,15 @@ void Renderer::DrawHeightmap() {
 }
 
 void Renderer::DrawWater() {
+	glDisable(GL_CULL_FACE);
 	BindShader(reflectShader);
 
 	glUniform3fv(glGetUniformLocation(reflectShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 
-	glUniform1i(glGetUniformLocation(reflectShader->GetProgram(), "diffuseTex"), 0);
+	glUniform1i(glGetUniformLocation(reflectShader->GetProgram(), "diffuseTex"), 3);
 	glUniform1i(glGetUniformLocation(reflectShader->GetProgram(), "cubeTex"), 2);
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, waterTex);
 
 	glActiveTexture(GL_TEXTURE2);
@@ -599,6 +616,7 @@ void Renderer::DrawWater() {
 	UpdateShaderMatrices();
 	// SetShaderLight (* light ); // No lighting in this shader !
 	quad->Draw();
+	glEnable(GL_CULL_FACE);
 }
 
 void Renderer::DrawSSAO() {
@@ -734,54 +752,59 @@ void Renderer::DrawNode(SceneNode* n) {
 		BindShader(n->GetShader());
 		SetShaderLight(*light);
 
-		//Matrix4 model = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
-
 		modelMatrix = n->GetWorldTransform() * Matrix4::Scale(n->GetModelScale());
 		UpdateShaderMatrices();
 
-		//glUniformMatrix4fv(glGetUniformLocation(n->GetShader()->GetProgram(), "modelMatrix"), 1, false, model.values);
-		//glUniform4fv(glGetUniformLocation(n->GetShader()->GetProgram(), "nodeColour"), 1, (float*)& n->GetColour());
 		glUniform3fv(glGetUniformLocation(n->GetShader()->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 
-		//if (n->HasAnim()) 
-		//	Animate(n->GetShader(), n->GetMesh(), n->GetAnimation());
-
-		for (int i = 0; i < n->GetMesh()->GetSubMeshCount(); i++) {
-			//glActiveTexture(GL_TEXTURE0);
-			//glBindTexture(GL_TEXTURE_2D, n->GetTextures()[i]);
-
-			GLuint a = n->GetDiffuseTextures()[i];
-			//glUniform1i(glGetUniformLocation(shader->GetProgram(), "useTexture"), texture);
-			glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "diffuseTex"), 2);
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, n->GetDiffuseTextures()[i]);
-
-
-
-			float hasBumpMap = n->GetNormalMaps().size() != 0;
-			//glUniform1f(glGetUniformLocation(n->GetShader()->GetProgram(), "hasBumpMap"), 1, (float*)& hasBumpMap);
-			glUniform1f(glGetUniformLocation(n->GetShader()->GetProgram(), "hasBumpMap"), hasBumpMap);
-			if (hasBumpMap) {
-				GLuint b = n->GetNormalMaps()[i];
-				glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "bumpTex"), 1);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, n->GetNormalMaps()[i]);
-			}
-
-			glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "ssaoTex"), 0);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, ssaoColourTex);
-
-			glUniform2f(glGetUniformLocation(n->GetShader()->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
-
-			/*modelMatrix.ToIdentity();
-			textureMatrix.ToIdentity();*/
-
-			//n->GetMesh()->Draw();
-			n->GetMesh()->DrawSubMesh(i);
+		if (n->GetMesh()->GetSubMeshCount() == 0) {
+			BindTextures(n, 0);
+			BindDiffuseTextures(n);
+			n->GetMesh()->Draw();
 		}
+		else {
+			for (int i = 0; i < n->GetMesh()->GetSubMeshCount(); i++) {
+				BindTextures(n, i);
+				BindDiffuseTexture(n, i);
+				n->GetMesh()->DrawSubMesh(i);
+			}
+		}
+	}
+}
 
-		//n->Draw(*this);
+void Renderer::BindTextures(SceneNode* n, int index) {
+	glUniform2f(glGetUniformLocation(n->GetShader()->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
+
+	glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "ssaoTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, ssaoColourTex);
+
+	float hasBumpMap = n->GetNormalMaps().size() != 0;
+	glUniform1f(glGetUniformLocation(n->GetShader()->GetProgram(), "hasBumpMap"), hasBumpMap);
+	if (hasBumpMap) {
+		GLuint b = n->GetNormalMaps()[index];
+		glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "bumpTex"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, n->GetNormalMaps()[index]);
+	}
+}
+
+void Renderer::BindDiffuseTexture(SceneNode* n, int subMeshIndex) {
+	glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "diffuseTex"), 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, n->GetDiffuseTextures()[subMeshIndex]);
+}
+
+void Renderer::BindDiffuseTextures(SceneNode* n) {
+	vector<GLuint> textures = n->GetDiffuseTextures();
+
+	for (int i = 0; i < textures.size(); i++) {
+
+		string texName = "diffuseTex" + std::to_string(i);
+
+		glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), texName.c_str()), 2 + i);
+		glActiveTexture(activeTextures[i]);
+		glBindTexture(GL_TEXTURE_2D, n->GetDiffuseTextures()[i]);
 	}
 }
 

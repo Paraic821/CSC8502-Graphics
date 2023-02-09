@@ -1,10 +1,14 @@
 #version 330 core
 
-uniform sampler2D diffuseTex;
 //uniform sampler2D bumpTex;
-uniform sampler2D rockDiffuseTex;
 //uniform sampler2D rockBumpTex;
-uniform sampler2D grassTex;
+
+uniform sampler2D diffuseTex0;
+uniform sampler2D diffuseTex1;
+uniform sampler2D diffuseTex2;
+//uniform sampler2D grassTex;
+//uniform sampler2D rockDiffuseTex;
+
 uniform sampler2D shadowTex;
 
 //uniform float heights[3];
@@ -40,25 +44,25 @@ void main ( void ) {
 	normal = normalize( TBN * normal * 2.0 - 1.0);
 	
 	if(IN.worldPos.y > heights[3]){
-		diffuse = texture( rockDiffuseTex, IN.texCoord );
+		diffuse = texture( diffuseTex2, IN.texCoord );
 	}
 	else if(IN.worldPos.y <= heights[3] && IN.worldPos.y  > heights[2]){
-		vec4 tex1 = texture( rockDiffuseTex, IN.texCoord );
-		vec4 tex2 = texture( grassTex, IN.texCoord );		
+		vec4 tex1 = texture( diffuseTex2, IN.texCoord );
+		vec4 tex2 = texture( diffuseTex1, IN.texCoord );		
 		float blendFactor = (IN.worldPos.y - heights[2]) / (heights[3] - heights[2]);	
 		diffuse = mix(tex2, tex1, blendFactor);
 	}
 	else if(IN.worldPos.y <= heights[2] && IN.worldPos.y  > heights[1]){
-		diffuse = texture( grassTex, IN.texCoord );
+		diffuse = texture( diffuseTex1, IN.texCoord );
 	}
 	else if(IN.worldPos.y <= heights[1] && IN.worldPos.y  > heights[0]){
-		vec4 tex1 = texture( grassTex, IN.texCoord );
-		vec4 tex2 = texture( diffuseTex, IN.texCoord );		
+		vec4 tex1 = texture( diffuseTex1, IN.texCoord );
+		vec4 tex2 = texture( diffuseTex0, IN.texCoord );		
 		float blendFactor = (IN.worldPos.y - heights[0]) / (heights[1] - heights[0]);	
 		diffuse = mix(tex2, tex1, blendFactor);
 	}
 	else if(IN.worldPos.y <= heights[0]){
-		diffuse = texture( diffuseTex, IN.texCoord );
+		diffuse = texture( diffuseTex0, IN.texCoord );
 	}
 	
 	float lambert = max( dot( incident, normal ), 0.0f );

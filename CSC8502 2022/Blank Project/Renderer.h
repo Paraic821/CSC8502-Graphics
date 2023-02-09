@@ -55,11 +55,17 @@ protected:
 	void DrawNode(SceneNode* n);
 	void Animate(Shader* s, Mesh* m, MeshAnimation* a);
 
+	void BindDiffuseTextures(SceneNode* n);
+	void BindDiffuseTexture(SceneNode* n, int subMeshIndex);
+	void BindTextures(SceneNode* n, int index);
+
 	void CalculateSampleKernels();
 
 	inline float lerp(float a, float b, float f) {
 		return a + f * (b - a);
 	}
+
+	vector<int> activeTextures = { GL_TEXTURE2, GL_TEXTURE3, GL_TEXTURE4};
 
 	Shader* lightShader;
 	Shader* heightMapShader;

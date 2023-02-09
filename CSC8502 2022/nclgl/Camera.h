@@ -53,6 +53,9 @@ protected:
 	float nextPitch;
 
 	bool started = false;
+	bool cooldown = false;
+	double cooldownTimer = 0.0f;
+
 	double startTime;
 	double timeSinceStart;
 
