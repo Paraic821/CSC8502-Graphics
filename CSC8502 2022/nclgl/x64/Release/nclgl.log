@@ -1,7 +1,0 @@
-﻿  Light.cpp
-  OGLRenderer.cpp
-C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\OGLRenderer.cpp(138,42): error C2039: 'DebugCallback': is not a member of 'OGLRenderer'
-C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\OGLRenderer.h(48): message : see declaration of 'OGLRenderer'
-C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\OGLRenderer.cpp(138,55): error C2065: 'DebugCallback': undeclared identifier
-C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\OGLRenderer.cpp(235,19): error C2039: 'DebugCallback': is not a member of 'OGLRenderer'
-C:\Users\b8016503\Documents\CSC8502\180165038_CSC8502_Coursework\CSC8502 2022\nclgl\OGLRenderer.h(48): message : see declaration of 'OGLRenderer'
