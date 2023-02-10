@@ -86,7 +86,7 @@ private:
 	Shader* currentShader;	
 	HDC		deviceContext;	//...Device context?
 	HGLRC	renderContext;	//Permanent Rendering Context
-#ifdef _DEBUG
+#ifdef OPENGL_DEBUGGING
 	static void CALLBACK DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 #endif
 };

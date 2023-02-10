@@ -58,6 +58,8 @@ void main()
 
 	//occlusion = occlusion + (occlusion - 0.5) * 0.5;
 
+	occlusion = pow(occlusion, 2);
+
 	fragColour = vec4(occlusion, occlusion, occlusion, 1.0);
 	//fragColour = occlusion;
 }

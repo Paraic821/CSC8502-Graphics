@@ -134,6 +134,8 @@ protected:
 	int currentFrame;
 	float frameTime;
 
+	float toggleAO = 1.0f;
+
 	SceneNode* root;
 	Frustum frameFrustum;
 	vector<SceneNode*> transparentNodeList;

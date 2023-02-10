@@ -155,6 +155,10 @@ void Renderer::UpdateScene(float dt, double totalTime) {
 
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
 
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
+		toggleAO = toggleAO >= 0 ? -1.0f : 1.0f;
+	}
+
 	root->Update(dt);
 
 	frameTime -= dt;
@@ -774,6 +778,7 @@ void Renderer::DrawNode(SceneNode* n) {
 
 void Renderer::BindTextures(SceneNode* n, int index) {
 	glUniform2f(glGetUniformLocation(n->GetShader()->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
+	glUniform1f(glGetUniformLocation(n->GetShader()->GetProgram(), "toggleAO"), toggleAO);
 
 	glUniform1i(glGetUniformLocation(n->GetShader()->GetProgram(), "ssaoTex"), 0);
 	glActiveTexture(GL_TEXTURE0);

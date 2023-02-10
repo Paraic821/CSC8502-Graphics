@@ -11,6 +11,7 @@ uniform vec3 cameraPos;
 uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform float lightRadius;
+uniform float toggleAO;
 
 in Vertex {
 	vec3 colour;
@@ -27,6 +28,7 @@ void main ( void ) {
 	vec3 halfDir = normalize( incident + viewDir );
 	vec2 texCoord = vec2(gl_FragCoord.xy * pixelSize);
 	float ambientOcclusion = texture(ssao, texCoord).r;
+	ambientOcclusion = toggleAO >= 0 ? ambientOcclusion : 1.0;
 
 	vec4 diffuse = texture( diffuseTex , IN.texCoord );
 	vec3 normal = IN.normal;
@@ -42,11 +44,11 @@ void main ( void ) {
 	specFactor = pow( specFactor , 60.0 );
 
 	vec3 surface = diffuse.rgb * lightColour.rgb;
+	//surface *= 0.3f * ambientOcclusion;
 	fragColour.rgb = surface * lambert * attenuation;
 	fragColour.rgb += ( lightColour.rgb * specFactor ) * attenuation * 0.33;
-	fragColour.rgb += surface * 0.2f * ambientOcclusion; //ambient!
-	//fragColour.rgb += surface * 0.3f;
+	fragColour.rgb += surface * 0.3f * ambientOcclusion; //ambient!
 	fragColour.a = diffuse.a;
 
-	fragColour = vec4(ambientOcclusion, ambientOcclusion, ambientOcclusion, 1.0);
+	//fragColour = vec4(ambientOcclusion, ambientOcclusion, ambientOcclusion, 1.0);
 }
